@@ -16,7 +16,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             connection = Util.getConnection();
             statement = Util.getStatement();
-        } catch (SQLException | ClassNotFoundException ignored) {
+        } catch (SQLException ignored) {
 
         }
     }
@@ -40,44 +40,41 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try (Connection connection = new Util().getConnection()) {
-            String sql = "INSERT users(name, lastName, age) VALUES(?,?,?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, lastName);
-            preparedStatement.setByte(3, age);
-        } catch (SQLException | ClassNotFoundException ignored) {
+        try {
+            String query = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
+            PreparedStatement prepStmt = connection.prepareStatement(query);
+            prepStmt.setString(1, name);
+            prepStmt.setString(2, lastName);
+            prepStmt.setByte(3, age);
+            prepStmt.execute();
+        } catch (SQLException ignored) {
         }
-
     }
 
     public void removeUserById(long id) {
-        try (Connection connection = new Util().getConnection()) {
-            Statement statement = connection.createStatement();
+        try {
             statement.executeUpdate("DELETE FROM users WHERE id = id");
-        } catch (SQLException | ClassNotFoundException ignored) {
+        } catch (SQLException ignored) {
         }
     }
 
     public List<User> getAllUsers() {
-        List<User> result = new ArrayList<User>();
-        try (Connection connection = new Util().getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select name, lastName, age from users");
+        List<User> result = new ArrayList<>();
+        try {
+            ResultSet rs = statement.executeQuery("SELECT * FROM users");
             while (rs.next()) {
                 result.add(new User(rs.getString(2), rs.getString(3), rs.getByte(4)));
             }
             return result;
-        } catch (SQLException | ClassNotFoundException ignored) {
+        } catch (SQLException ignored) {
         }
         return null;
     }
 
     public void cleanUsersTable() {
-        try (Connection connection = new Util().getConnection()) {
-            Statement statement = connection.createStatement();
+        try {
             statement.executeUpdate("TRUNCATE TABLE users");
-        } catch (SQLException | ClassNotFoundException ignored) {
+        } catch (SQLException ignored) {
         }
     }
 }

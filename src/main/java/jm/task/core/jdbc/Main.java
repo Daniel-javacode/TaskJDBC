@@ -19,11 +19,12 @@ public class Main {
             System.out.println("Введите возраст");
             byte age = sc.nextByte();
             test.saveUser(name, lastName, age);
+
             System.out.println("User с именем " + name + " добавлен в базу данных");
         }
         List<User> temp = test.getAllUsers();
-        for (int i=0;i<temp.size();i++){
-            System.out.println(temp.get(i).toString());
+        for (User user : temp) {
+            System.out.println(user.toString());
         }
         test.cleanUsersTable();
         test.dropUsersTable();

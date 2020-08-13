@@ -1,6 +1,6 @@
 package jm.task.core.jdbc;
 
-import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.model.User;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        UserDaoJDBCImpl test = new UserDaoJDBCImpl();
+        UserDaoHibernateImpl test = new UserDaoHibernateImpl();
         test.createUsersTable();
         for (int i = 0; i < 4; i++) {
             Scanner sc = new Scanner(System.in);

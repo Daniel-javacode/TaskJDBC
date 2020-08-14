@@ -2,9 +2,12 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -18,52 +21,49 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        session.beginTransaction();
+        Transaction tr = session.beginTransaction();
         session.createSQLQuery("CREATE TABLE users " +
                 "(id BIGINT AUTO_INCREMENT PRIMARY KEY," +
                 "name VARCHAR(255)," +
                 "lastName VARCHAR (50)," +
                 "age TINYINT)").executeUpdate();
-        session.getTransaction().commit();
+        tr.commit();
     }
 
     @Override
     public void dropUsersTable() {
-        session.beginTransaction();
+        Transaction tr = session.beginTransaction();
         session.createSQLQuery("DROP TABLE users").executeUpdate();
-        session.getTransaction().commit();
+        tr.commit();
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        session.beginTransaction();
+        Transaction tr = session.beginTransaction();
         User user = new User(name, lastName, age);
         session.save(user);
-        session.getTransaction().commit();
+        tr.commit();
     }
 
     @Override
     public void removeUserById(long id) {
         User user = session.get(User.class, id);
-        session.beginTransaction();
+        Transaction tr = session.beginTransaction();
         session.delete(user);
-        session.getTransaction().commit();
+        tr.commit();
     }
 
     @Override
     public List<User> getAllUsers() {
-        String sql = "SELECT name, lastName, age FROM users";
-        Query<User> query = session.createSQLQuery(sql).addEntity(User.class);
-        List<User> users = query.list();
-        return users;
+        return session.createSQLQuery("SELECT new list(User) FROM User").addEntity(User.class).list();
     }
 
     @Override
     public void cleanUsersTable() {
         try {
-            session.beginTransaction();
-            session.createSQLQuery("TRUNCATE TABLE users").executeUpdate();
-            session.getTransaction().commit();
+            Transaction tr = session.beginTransaction();
+            session.createSQLQuery("DELETE FROM users").executeUpdate();
+            tr.commit();
         } catch (NullPointerException ignored) {
         }
     }

@@ -33,7 +33,7 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void dropUsersTable() {
         Transaction tr = session.beginTransaction();
-        session.createSQLQuery("DROP TABLE users").executeUpdate();
+        session.createSQLQuery("DROP TABLE IF EXISTS users").executeUpdate();
         tr.commit();
     }
 
